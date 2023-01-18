@@ -1,59 +1,55 @@
-const express = require("express");
 require("dotenv").config();
-const { S3Client } = require("@aws-sdk/client-s3");
+
+const express = require("express");
+
 const app = express();
+
+app.listen(3001);
+
+const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const { AUTO_CONTENT_TYPE } = require("multer-s3");
 
-const s3 = new S3Client();
-// aws.config.update({
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   region: process.env.AWS_REGION,
-// });
+aws.config.update({
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  region: process.env.AWS_REGION,
+});
+const BUCKET = process.env.AWS_BUCKET_NAME;
+const s3 = new aws.S3();
 
-const Bucket = process.env.AWS_BUCKET_NAME;
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: Bucket,
-    acl: "public-read",
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    },
+    acl: "private",
+    bucket: BUCKET,
     key: function (req, file, cb) {
-      console.log(file);
       cb(null, file.originalname);
     },
   }),
 });
 
-// upload a single file
-app.post("/upload", upload.array("files", 3), (req, res) => {
-  res.json({ message: `${req.file.location}  location` });
+app.post("/upload", upload.single("file"), async function (req, res, next) {
+  res.send("Successfully uploaded " + req.file.location + " location!");
 });
 
-// Get list of files from the bucket
 app.get("/list", async (req, res) => {
-  let result = await s3.listObjectsV2(Bucket).promise();
-  let fileNames = result.Contents.map((item) => item.key);
-
-  res.json({ fileNames });
+  let r = await s3.listObjectsV2({ Bucket: BUCKET }).promise();
+  // Item.key Key has file name
+  let x = r.Contents.map((item) => item.Key);
+  res.send(x);
 });
 
-// get file via file name from s3
 app.get("/download/:filename", async (req, res) => {
-  const Key = req.params.filename;
-  const result = await s3.getObject({ Bucket, Key }).promise();
-
-  res.json({ result: result.body });
+  const filename = req.params.filename;
+  // gets object by It's name
+  let x = await s3.getObject({ Bucket: BUCKET, Key: filename }).promise();
+  console.log(x.Body);
+  res.send(x.Body);
 });
 
 app.delete("/delete/:filename", async (req, res) => {
-  const Key = req.params.filename;
-  const result = await s3.deleteObject({ Bucket, Key }).promise();
-
-  res.json({ message: "file deleted", result });
+  const filename = req.params.filename;
+  await s3.deleteObject({ Bucket: BUCKET, Key: filename }).promise();
+  res.send("File Deleted Successfully");
 });
-app.listen(3001, () => console.log("running on 3001"));
