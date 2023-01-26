@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "gulin",
+    "password": "password",
+    "database": "test",
+    "host": "127.0.0.1",
+    "dialect": "mariadb"
+  },
+  "test": {
+    "username": "gulin",
+    "password": "password",
+    "database": "test",
+    "host": "127.0.0.1",
+    "dialect": "mariadb"
+  },
+  "production": {
+    "username": "gulin",
+    "password": "password",
+    "database": "test",
+    "host": "127.0.0.1",
+    "dialect": "mariadb"
+  }
+}
