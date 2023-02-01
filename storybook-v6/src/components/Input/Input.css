@@ -1,0 +1,23 @@
+.input {
+  border: none;
+  width: 50%;
+  height: 30px;
+  font-size: 16px;
+  border-radius: 10px;
+  text-align: center;
+}
+.small {
+  width: 150px;
+  height: 50px;
+  background-color: aqua;
+}
+.medium {
+  width: 200px;
+  height: 70px;
+  background-color: rgb(226, 43, 43);
+}
+.large {
+  width: 250px;
+  height: 90px;
+  background-color: chartreuse;
+}
