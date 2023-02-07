@@ -1,22 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import React, { useEffect, useRef } from "react";
+import Input from "./components/Input";
+import FRParentInput from "./FRParentInput";
 function App() {
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const submitRef = useRef(null);
+
+  useEffect(() => {
+    firstNameRef.current.focus();
+  }, []);
+
+  const firstKeyDown = (e) => {
+    if (e.key === "Enter") {
+      lastNameRef.current.focus();
+    }
+  };
+  const lastKeyDown = (e) => {
+    if (e.key === "Enter") {
+      submitRef.current.focus();
+    }
+  };
+  const submitKeyDown = () => {
+    alert("form submitted");
+  };
   return (
     <div className="App">
+      {/* <FRParentInput /> */}
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Input
+          type="text"
+          placeholder="Enter first name"
+          ref={firstNameRef}
+          onKeyDown={firstKeyDown}
+        />
+        <Input
+          type="text"
+          placeholder="Enter last name"
+          ref={lastNameRef}
+          onKeyDown={lastKeyDown}
+        />
+        <button ref={submitRef} onKeyDown={submitKeyDown}>
+          Submit
+        </button>
       </header>
     </div>
   );
